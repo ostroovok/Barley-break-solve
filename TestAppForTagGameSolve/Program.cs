@@ -20,10 +20,11 @@ namespace TestAppForTagGameSolve
         public static void Main(string[] args)
         {
             Solve();
+            Console.Clear();
             var counter = 0;
-            Console.SetCursorPosition(0, 0);
             while (res == null)
             {
+                Console.SetCursorPosition(0, 0);
                 switch (counter % 3)
                 {
                     case 0:
