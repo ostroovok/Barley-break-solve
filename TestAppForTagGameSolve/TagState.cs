@@ -6,6 +6,16 @@ namespace TestAppForTagGameSolve
     public class TagState : State
     {
         public int SideSize { get; set; }
+        private byte[] field;
+        public byte[] Field
+        {
+            get => field;
+            set
+            {
+                field = value;
+                Hash = GetFieldHashCode();
+            }
+        }
         public TagState(State parent, int sideSize) : base(parent)
         {
             SideSize = sideSize;
@@ -51,6 +61,15 @@ namespace TestAppForTagGameSolve
             }
             return sbf.ToString();
         }
-
+        public string GetFieldHashCode()
+        {
+            var str = "";
+            for (int i = 0; i < Field.Length; i++)
+            {
+                var r = Field[i] + 1;
+                str += r.ToString();
+            }
+            return str;
+        }
     }
 }

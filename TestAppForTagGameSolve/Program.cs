@@ -12,7 +12,7 @@ namespace TestAppForTagGameSolve
 
         private static int _stepCount = 10;
 
-        private static int _sideSize = 4;
+        private static int _sideSize = 2;
         private static Random _rnd;
 
         public static void Main(string[] args)
@@ -38,7 +38,7 @@ namespace TestAppForTagGameSolve
 
             List<State> res = BFS.Search(startState);
             Print(res);
-            Console.WriteLine($"\\n Count closed: {BFS.Closed}");
+            Console.WriteLine($"\n Count closed: {BFS.Closed}");
         }
         #region Private Methods
         private static byte[] GenerateStartState(TagRules rules, int swapCount)
