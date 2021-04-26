@@ -14,9 +14,35 @@ namespace TestAppForTagGameSolve
         private static int _stepCount = 10;
 
         private static int _sideSize = 4;
+        private static List<State> res;
         private static Random _rnd;
 
-        public async static void Main(string[] args)
+        public static void Main(string[] args)
+        {
+            Solve();
+            var counter = 0;
+            Console.SetCursorPosition(0, 0);
+            while (res == null)
+            {
+                switch (counter % 3)
+                {
+                    case 0:
+                        Console.WriteLine("Solve in progress \n Wait please. ");
+                        break;
+                    case 1:
+                        Console.WriteLine("Solve in progress \n Wait please.. ");
+                        break;
+                    case 2:
+                        Console.WriteLine("Solve in progress \n Wait please... ");
+                        break;
+                }
+                counter++;
+            }
+            Console.Clear();
+            Print(res);
+        }
+
+        public async static void Solve()
         {
             _rnd = new();
             int size = _sideSize * _sideSize;
@@ -52,27 +78,8 @@ namespace TestAppForTagGameSolve
 
             BFSearch<TagState, TagRules> BFS = new(rules);
             
-            List<State> res = await BFSearshAsync(BFS, startState);
+            res = await BFSearshAsync(BFS, startState);
 
-            counter = 0;
-            while (res == null)
-            {
-                switch (counter % 3)
-                {
-                    case 0:
-                        Console.WriteLine("Solve in progress \n Wait please. ");
-                        break;
-                    case 1:
-                        Console.WriteLine("Solve in progress \n Wait please.. ");
-                        break;
-                    case 2:
-                        Console.WriteLine("Solve in progress \n Wait please... ");
-                        break;
-                }
-                counter++;
-            }
-            //Console.Clear();
-            Print(res);
             Console.WriteLine($"\n Count closed: {BFS.Closed}");
         }
         #region Private Methods
