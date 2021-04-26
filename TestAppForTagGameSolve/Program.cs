@@ -1,6 +1,7 @@
 ﻿using BFSearchExample;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TestAppForTagGameSolve
 {
@@ -12,10 +13,10 @@ namespace TestAppForTagGameSolve
 
         private static int _stepCount = 10;
 
-        private static int _sideSize = 2;
+        private static int _sideSize = 4;
         private static Random _rnd;
 
-        public static void Main(string[] args)
+        public async static void Main(string[] args)
         {
             _rnd = new();
             int size = _sideSize * _sideSize;
@@ -25,22 +26,60 @@ namespace TestAppForTagGameSolve
             TagState startState = new TagState(null, _sideSize);
 
             if (startField == null)
+                startField = GenerateStartState(rules, _stepCount);
+            var counter = 0;
+
+            while (!startState.CheckState(startField))
             {
                 startField = GenerateStartState(rules, _stepCount);
+                Console.SetCursorPosition(0, 0);
+                switch (counter % 3)
+                {
+                    case 0:
+                        Console.WriteLine("Generating a solvable combination \n Wait please. ");
+                        break;
+                    case 1:
+                        Console.WriteLine("Generating a solvable combination \n Wait please.. ");
+                        break;
+                    case 2:
+                        Console.WriteLine("Generating a solvable combination \n Wait please... ");
+                        break;
+                }
+                counter++;
             }
+
             startState.Field = startField;
 
-            if (!startState.CheckState())
-                throw new Exception("Unsolvable combination");
-
-
             BFSearch<TagState, TagRules> BFS = new(rules);
+            
+            List<State> res = await BFSearshAsync(BFS, startState);
 
-            List<State> res = BFS.Search(startState);
+            counter = 0;
+            while (res == null)
+            {
+                switch (counter % 3)
+                {
+                    case 0:
+                        Console.WriteLine("Solve in progress \n Wait please. ");
+                        break;
+                    case 1:
+                        Console.WriteLine("Solve in progress \n Wait please.. ");
+                        break;
+                    case 2:
+                        Console.WriteLine("Solve in progress \n Wait please... ");
+                        break;
+                }
+                counter++;
+            }
+            //Console.Clear();
             Print(res);
             Console.WriteLine($"\n Count closed: {BFS.Closed}");
         }
         #region Private Methods
+        private static async Task<List<State>> BFSearshAsync(BFSearch<TagState, TagRules> BFS, TagState startState)
+        {
+            return await Task.Run(() => BFS.Search(startState));
+        }
         private static byte[] GenerateStartState(TagRules rules, int swapCount)
         {
             int stepCount = swapCount;

@@ -41,7 +41,27 @@ namespace TestAppForTagGameSolve
             /* Если N является нечётной, то решения головоломки не существует. */
             return (N & 1) == 0; // Первый бит четного числа равен 0
         }
-
+        public bool CheckState(byte[] field)
+        {
+            int N = 0;
+            int e = 0;
+            int sideSize = 4;
+            for (int i = 0; i < field.Length; i++)
+            {
+                /* Определяется номер ряда пустой клетки (считая с 1). */
+                if (field[i] == 0)
+                    e = i / sideSize + 1;
+                if (i == 0)
+                    continue;
+                /* Производится подсчет количества клеток меньших текущей */
+                for (int j = i + 1; j < field.Length; j++)
+                    if (field[j] < field[i])
+                        N++;
+            }
+            N += e;
+            /* Если N является нечётной, то решения головоломки не существует. */
+            return (N & 1) == 0; // Первый бит четного числа равен 0
+        }
         public override string ToString()
         {
             if (Field == null)
