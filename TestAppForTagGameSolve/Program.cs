@@ -1,6 +1,8 @@
 ﻿using BFSearchExample;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TestAppForTagGameSolve
@@ -14,7 +16,11 @@ namespace TestAppForTagGameSolve
         private static int _stepCount = 10;
 
         private static int _sideSize = 4;
-        private static List<State> res;
+
+        private static BFSearch<TagState, TagRules> _BFS;
+
+        private static List<State> _res;
+
         private static Random _rnd;
 
         public static void Main(string[] args)
@@ -22,27 +28,18 @@ namespace TestAppForTagGameSolve
             Solve();
             Console.Clear();
             var counter = 0;
-            while (res == null)
+            while (_res == null)
             {
+                if (counter > 15)
+                    throw new Exception("Timeout exceeded");
                 Console.SetCursorPosition(0, 0);
-                switch (counter % 3)
-                {
-                    case 0:
-                        Console.WriteLine("Solve in progress \n Wait please. ");
-                        break;
-                    case 1:
-                        Console.WriteLine("Solve in progress \n Wait please.. ");
-                        break;
-                    case 2:
-                        Console.WriteLine("Solve in progress \n Wait please... ");
-                        break;
-                }
+                WaitMes(counter, "Solve in process");
                 counter++;
+                Thread.Sleep(1000);
             }
-            Console.Clear();
-            Print(res);
+            Print(_res);
         }
-
+        
         public async static void Solve()
         {
             _rnd = new();
@@ -56,34 +53,36 @@ namespace TestAppForTagGameSolve
                 startField = GenerateStartState(rules, _stepCount);
             var counter = 0;
 
-            while (!startState.CheckState(startField))
+            while (!startState.CheckState(startField) || startField.SequenceEqual(terminateField))
             {
                 startField = GenerateStartState(rules, _stepCount);
                 Console.SetCursorPosition(0, 0);
-                switch (counter % 3)
-                {
-                    case 0:
-                        Console.WriteLine("Generating a solvable combination \n Wait please. ");
-                        break;
-                    case 1:
-                        Console.WriteLine("Generating a solvable combination \n Wait please.. ");
-                        break;
-                    case 2:
-                        Console.WriteLine("Generating a solvable combination \n Wait please... ");
-                        break;
-                }
+                WaitMes(counter, "Generating a acceptable combination");
                 counter++;
             }
 
             startState.Field = startField;
 
-            BFSearch<TagState, TagRules> BFS = new(rules);
+            _BFS = new(rules);
             
-            res = await BFSearshAsync(BFS, startState);
-
-            Console.WriteLine($"\n Count closed: {BFS.Closed}");
+            _res = await BFSearshAsync(_BFS, startState);
         }
         #region Private Methods
+        private static void WaitMes(int counter, string str)
+        {
+            switch (counter % 3)
+            {
+                case 1:
+                    Console.WriteLine($"{str} \n Wait please. ");
+                    break;
+                case 2:
+                    Console.WriteLine($"{str} \n Wait please.. ");
+                    break;
+                case 0:
+                    Console.WriteLine($"{str} \n Wait please... ");
+                    break;
+            }
+        }
         private static async Task<List<State>> BFSearshAsync(BFSearch<TagState, TagRules> BFS, TagState startState)
         {
             return await Task.Run(() => BFS.Search(startState));
@@ -127,10 +126,12 @@ namespace TestAppForTagGameSolve
 
         public static void Print(List<State> states)
         {
+            Console.Clear();
             foreach (var s in states)
             {
                 Console.WriteLine(s.ToString());
             }
+            Console.WriteLine($"\n---Closed: {_BFS.Closed}---");
         }
     }
 }
