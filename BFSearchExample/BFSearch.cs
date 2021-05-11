@@ -38,13 +38,15 @@ namespace BFSearchExample
 
                 close.Add(x.Hash);
                 Closed++;
+                
                 bool betterH;
-
+                
+                var h = Rules.H(x);
+                
                 List<TState> neighbors = Rules.Neighbors(x);
 
                 foreach (var n in neighbors)
                 {
-                    var h = Rules.H(n);
                     if (!close.Contains(n.Hash))
                     {
                         n.H = Rules.H(n);
